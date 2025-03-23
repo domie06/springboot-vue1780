@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.JiedanDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.odd as odd
+        ,a.daiqukuaidimc as daiqukuaidimc
+        ,a.jdyonghu_id as jdyonghuId
+        ,a.initiate_time as initiateTime
+        ,a.addresseename as addresseename
+        ,a.jdphone as jdphone
+        ,a.jdaddressee as jdaddressee
+        ,a.jdtakecode as jdtakecode
+        ,a.jdzt_types as jdztTypes
+        ,a.kdlx_types as kdlxTypes
+        ,a.dx as dx
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.JiedanView" >
+        SELECT
+        <include refid="Base_Column_List" />,b.name as fbrname
+
+--         级联表的字段
+
+        FROM jiedan  a left join yonghu b on a.jdyonghu_id = b.id
+
+        <where>
+            <if test=" params.odd != '' and params.odd != null and params.odd != 'null' ">
+                and a.odd like CONCAT('%',#{params.odd},'%')
+            </if>
+            <if test="params.daiqukuaidimc != null">
+                and a.daiqukuaidimc = #{params.daiqukuaidimc}
+            </if>
+            <if test="params.jdyonghuId != null">
+                and a.jdyonghu_id = #{params.jdyonghuId}
+            </if>
+            <if test=" params.initiateTimeStart != '' and params.initiateTimeStart != null ">
+                <![CDATA[  and DATE_FORMAT(a.initiate_time, '%Y-%m-%d %H:%T:%s') >=
+                DATE_FORMAT(#{params.initiateTimeStart}, '%Y-%m-%d %H:%T:%s')   ]]>
+            </if>
+            <if test=" params.initiateTimeEnd != '' and params.initiateTimeEnd != null ">
+                <![CDATA[  and DATE_FORMAT(a.initiate_time, '%Y-%m-%d %H:%T:%s') <=
+                DATE_FORMAT(#{params.initiateTimeEnd} , '%Y-%m-%d %H:%T:%s')    ]]>
+            </if>
+            <if test=" params.addresseename != '' and params.addresseename != null and params.addresseename != 'null' ">
+                and a.addresseename like CONCAT('%',#{params.addresseename},'%')
+            </if>
+            <if test=" params.jdphone != '' and params.jdphone != null and params.jdphone != 'null' ">
+                and a.jdphone like CONCAT('%',#{params.jdphone},'%')
+            </if>
+            <if test=" params.jdaddressee != '' and params.jdaddressee != null and params.jdaddressee != 'null' ">
+                and a.jdaddressee like CONCAT('%',#{params.jdaddressee},'%')
+            </if>
+            <if test=" params.jdtakecode != '' and params.jdtakecode != null and params.jdtakecode != 'null' ">
+                and a.jdtakecode like CONCAT('%',#{params.jdtakecode},'%')
+            </if>
+            <if test="params.jdztTypes != null">
+                and a.jdzt_types = #{params.jdztTypes}
+            </if>
+            <if test="params.kdlxTypes != null">
+                and a.kdlx_types = #{params.kdlxTypes}
+            </if>
+
+        </where>
+        order by a.id desc
+    </select>
+
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.DaiquDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.dqname as dqname
+        ,a.zhandian_id as zhandianId
+        ,a.yonghu_id as yonghuId
+        ,a.kddx_types as kddxTypes
+        ,a.dqphone as dqphone
+        ,a.takecode as takecode
+        ,a.kdzt_types as kdztTypes
+        ,a.pickup_time as pickupTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.DaiquView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,yonghu.studentnumber as studentnumber
+        ,yonghu.name as name
+        ,yonghu.username as username
+        ,yonghu.password as password
+        ,yonghu.sex_types as sexTypes
+        ,yonghu.img_photo as imgPhoto
+        ,yonghu.phone as phone
+        ,yonghu.zhuSuLou as zhuSuLou
+        ,yonghu.dormitory as dormitory
+        ,yonghu.role as role
+        ,zhandian.zdname as zdname
+        ,zhandian.address as address
+
+        FROM daiqu  a
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+        left JOIN zhandian zhandian ON a.zhandian_id = zhandian.id
+
+        <where>
+            <if test=" params.dqname != '' and params.dqname != null and params.dqname != 'null' ">
+                and a.dqname like CONCAT('%',#{params.dqname},'%')
+            </if>
+            <if test="params.zhandianId != null">
+                and a.zhandian_id = #{params.zhandianId}
+            </if>
+            <if test="params.yonghuId != null">
+                and a.yonghu_id = #{params.yonghuId}
+            </if>
+            <if test="params.kddxTypes != null">
+                and a.kddx_types = #{params.kddxTypes}
+            </if>
+            <if test="params.dqphoneStart != null">
+                <![CDATA[  and a.dqphone >= #{params.dqphoneStart}   ]]>
+            </if>
+            <if test="params.dqphoneEnd != null">
+                <![CDATA[  and a.dqphone <= #{params.dqphoneEnd}   ]]>
+            </if>
+            <if test=" params.takecode != '' and params.takecode != null and params.takecode != 'null' ">
+                and a.takecode like CONCAT('%',#{params.takecode},'%')
+            </if>
+            <if test="params.kdztTypes != null">
+                and a.kdzt_types = #{params.kdztTypes}
+            </if>
+            <if test=" params.pickupTimeStart != '' and params.pickupTimeStart != null ">
+                <![CDATA[  and DATE_FORMAT(a.pickup_time, '%Y-%m-%d %H:%T:%s') >=
+                DATE_FORMAT(#{params.pickupTimeStart}, '%Y-%m-%d %H:%T:%s')   ]]>
+            </if>
+            <if test=" params.pickupTimeEnd != '' and params.pickupTimeEnd != null ">
+                <![CDATA[  and DATE_FORMAT(a.pickup_time, '%Y-%m-%d %H:%T:%s') <=
+                DATE_FORMAT(#{params.pickupTimeEnd} , '%Y-%m-%d %H:%T:%s')    ]]>
+            </if>
+
+            <if test=" params.studentnumber != '' and params.studentnumber != null and params.studentnumber != 'null' ">
+                and yonghu.studentnumber like CONCAT('%',#{params.studentnumber},'%')
+            </if>
+            <if test=" params.name != '' and params.name != null and params.name != 'null' ">
+                and yonghu.name like CONCAT('%',#{params.name},'%')
+            </if>
+            <if test=" params.username != '' and params.username != null and params.username != 'null' ">
+                and yonghu.username like CONCAT('%',#{params.username},'%')
+            </if>
+            <if test=" params.password != '' and params.password != null and params.password != 'null' ">
+                and yonghu.password like CONCAT('%',#{params.password},'%')
+            </if>
+            <if test="params.sexTypes != null">
+                and yonghu.sex_types = #{params.sexTypes}
+            </if>
+
+            <if test=" params.phone != '' and params.phone != null and params.phone != 'null' ">
+                and yonghu.phone like CONCAT('%',#{params.phone},'%')
+            </if>
+            <if test=" params.zhuSuLou != '' and params.zhuSuLou != null and params.zhuSuLou != 'null' ">
+                and yonghu.zhuSuLou like CONCAT('%',#{params.zhuSuLou},'%')
+            </if>
+            <if test=" params.dormitory != '' and params.dormitory != null and params.dormitory != 'null' ">
+                and yonghu.dormitory like CONCAT('%',#{params.dormitory},'%')
+            </if>
+            <if test=" params.role != '' and params.role != null and params.role != 'null' ">
+                and yonghu.role like CONCAT('%',#{params.role},'%')
+            </if>
+            <if test=" params.zdname != '' and params.zdname != null and params.zdname != 'null' ">
+                and zhandian.zdname like CONCAT('%',#{params.zdname},'%')
+            </if>
+            <if test=" params.address != '' and params.address != null and params.address != 'null' ">
+                and zhandian.address like CONCAT('%',#{params.address},'%')
+            </if>
+        </where>
+        order by a.id desc
+    </select>
+
+</mapper>
